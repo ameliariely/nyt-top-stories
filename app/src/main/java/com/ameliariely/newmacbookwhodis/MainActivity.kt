@@ -14,6 +14,6 @@ class MainActivity : AppCompatActivity() {
 
     fun viewDetail(v: View) {
         val intent = Intent(this@MainActivity, ViewDetailActivity::class.java)
-
+        startActivity(intent)
     }
 }
