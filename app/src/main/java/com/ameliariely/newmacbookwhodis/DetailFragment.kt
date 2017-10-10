@@ -15,18 +15,16 @@
  */
 package com.ameliariely.newmacbookwhodis
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
+import kotlinx.android.synthetic.main.frag_detail.*
+import okhttp3.*
+import java.io.IOException
 
 /**
  * Main UI for the task detail screen.
@@ -39,8 +37,31 @@ class DetailFragment : Fragment() {
 
     private lateinit var detailSwtich: TextView
 
-    override fun onResume() {
-        super.onResume()
+    private val httpClient: OkHttpClient = OkHttpClient()
+
+    //TODO halp
+    private val NYT_TOPSTORIES_HOME_URL = "https://api.nytimes.com/svc/topstories/v2/home.json?api-key=$$$$$"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val request = Request.Builder()
+                .url(NYT_TOPSTORIES_HOME_URL)
+                .build()
+
+        val uiHandler = Handler()
+        httpClient.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call?, response: Response?) {
+                val responseData = response?.body()?.string()
+                uiHandler.post(
+                        { textView.text = responseData }
+                )
+            }
+
+            override fun onFailure(call: Call?, e: IOException?) {
+                e?.printStackTrace()
+                TODO() //To change body of created functions use File | Settings | File Templates.
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

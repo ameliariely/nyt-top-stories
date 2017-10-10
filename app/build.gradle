@@ -32,7 +32,5 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
-//    Custom additons
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
 }
