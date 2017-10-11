@@ -23,8 +23,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.ameliariely.newmacbookwhodis.Models.NYTResult
-import com.ameliariely.newmacbookwhodis.util.NewYorkTimesService
+import com.ameliariely.newmacbookwhodis.models.NYTResult
+import com.ameliariely.newmacbookwhodis.util.NYTService
 import kotlinx.android.synthetic.main.frag_detail.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -77,7 +77,7 @@ class DetailFragment : Fragment() {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        val service = retrofit.create<NewYorkTimesService>(NewYorkTimesService::class.java)
+        val service = retrofit.create<NYTService>(NYTService::class.java)
 
         val call = service.storiesForSection("home")
         val uiHandler = Handler()

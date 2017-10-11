@@ -1,4 +1,4 @@
-package com.ameliariely.newmacbookwhodis.Models
+package com.ameliariely.newmacbookwhodis.models
 
 
 import com.google.gson.annotations.Expose
