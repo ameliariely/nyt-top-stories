@@ -18,13 +18,21 @@ package com.ameliariely.newmacbookwhodis
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.ameliariely.newmacbookwhodis.Models.NYTResult
+import com.ameliariely.newmacbookwhodis.util.NewYorkTimesService
 import kotlinx.android.synthetic.main.frag_detail.*
-import okhttp3.*
-import java.io.IOException
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
 
 /**
  * Main UI for the task detail screen.
@@ -40,26 +48,56 @@ class DetailFragment : Fragment() {
     private val httpClient: OkHttpClient = OkHttpClient()
 
     //TODO halp
-    private val NYT_TOPSTORIES_HOME_URL = "https://api.nytimes.com/svc/topstories/v2/home.json?api-key=$$$$$"
+    private val NYT_BASE_URL = "https://api.nytimes.com/svc/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val request = Request.Builder()
-                .url(NYT_TOPSTORIES_HOME_URL)
+
+//        httpClient.interceptors().add(object : Interceptor {
+//            @Throws(IOException::class)
+//            override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+//                val original = chain.request()
+//                val originalHttpUrl = original.url()
+//
+//                val url = originalHttpUrl.newBuilder()
+//                        .addQueryParameter("api-key", getString(R.string.nyt_top_stories_api_key))
+//                        .build()
+//
+//                // Request customization: add request headers
+//                val requestBuilder = original.newBuilder()
+//                        .url(url)
+//
+//                val request = requestBuilder.build()
+//                return chain.proceed(request)
+//            }
+//        })
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl(NYT_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
+        val service = retrofit.create<NewYorkTimesService>(NewYorkTimesService::class.java)
+
+        val call = service.storiesForSection("home")
         val uiHandler = Handler()
-        httpClient.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call?, response: Response?) {
-                val responseData = response?.body()?.string()
+
+        call.enqueue(object : Callback<NYTResult>{
+
+            override fun onFailure(call: Call<NYTResult>?, t: Throwable?) {
+                Log.e("amelia", call.toString(), t)
                 uiHandler.post(
-                        { textView.text = responseData }
+                        {
+                            textView1.height = 5000
+                            textView1.width = 2000
+                            textView1.text = "Error" +t?.stackTrace}
                 )
             }
 
-            override fun onFailure(call: Call?, e: IOException?) {
-                e?.printStackTrace()
-                TODO() //To change body of created functions use File | Settings | File Templates.
+            override fun onResponse(call: Call<NYTResult>?, response: Response<NYTResult>?) {
+                uiHandler.post(
+                        { textView.text = response?.body()?.copyright ?: "No copyright" }
+                )
             }
         })
     }
