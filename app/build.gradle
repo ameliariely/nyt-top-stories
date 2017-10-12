@@ -37,4 +37,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     // Gson JSON converter for Retrofit
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    // Design support library :) -- for snackbar right now
+    compile 'com.android.support:design:26.1.0'
 }

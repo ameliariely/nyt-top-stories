@@ -1,15 +1,11 @@
 package com.ameliariely.newmacbookwhodis.util
 
 import android.content.res.Resources
-import android.os.Handler
-import android.util.Log
 import com.ameliariely.newmacbookwhodis.R
 import com.ameliariely.newmacbookwhodis.models.NYTResult
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
@@ -18,7 +14,7 @@ class NYTRequest {
 
     private val NYT_BASE_URL = "https://api.nytimes.com/svc/"
 
-    fun getTopStoriesHome(res: Resources, onSucccessFunction: () -> Unit, onFailureFunction: () -> Unit) {
+    fun getTopStoriesNYTResult(res: Resources): Call<NYTResult> {
         val httpClient = OkHttpClient().newBuilder()
 
         httpClient.interceptors().add(object : Interceptor {
@@ -48,19 +44,6 @@ class NYTRequest {
 
         val service = retrofit.create<NYTService>(NYTService::class.java)
 
-        val call = service.storiesForSection("home")
-        val uiHandler = Handler()
-
-        call.enqueue(object : Callback<NYTResult> {
-
-            override fun onFailure(call: Call<NYTResult>?, t: Throwable?) {
-                Log.e("Retrofit failure", call.toString(), t)
-                uiHandler.post({ onFailureFunction() })
-            }
-
-            override fun onResponse(call: Call<NYTResult>?, response: Response<NYTResult>?) {
-                uiHandler.post({ onSucccessFunction() })
-            }
-        })
+        return service.storiesForSection("home")
     }
 }
